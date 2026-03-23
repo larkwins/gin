@@ -11,8 +11,8 @@
 | 5 | [#4189](https://github.com/gin-gonic/gin/issues/4189) | **`Engine.NoMethod()` 对中间件无效** | 全局中间件会在 `NoMethodHandler` 之前执行，导致 405 处理被中间件逻辑覆盖 | `gin.go` 中的 `rebuild405Handlers()` 函数 | ⭐⭐ 中等 | ✅ 能修复。增加一个如 `SkipAllOnMethodNotAllowed` 的选项，在 `rebuild405Handlers` 中跳过全局中间件 | - |
 | 6 | [#4117](https://github.com/gin-gonic/gin/issues/4117) | **gin.Context 数据竞争 (data race)** | 启用 `ContextWithFallback` 后，将 `gin.Context` 作为 `context.Context` 传给 `http.NewRequestWithContext` 时，Context 池回收会导致并发读写竞争 | `context.go`（Context 池化/回收逻辑）、`gin.go`（`ServeHTTP` 中的 context 生命周期管理） | ⭐⭐⭐ 困难 | ⚠️ 能修但有重大影响。根本原因是 Context 池化 + 实现 `context.Context` 接口的设计冲突，修复可能需要禁用池化或重构 Context 生命周期管理，对性能有影响 | - |
 | 7 | [#4119](https://github.com/gin-gonic/gin/issues/4119) | **路由无法正确匹配** | 多个包含大量路径参数的相似路由之间，匹配结果不稳定/随机匹配到错误路由 | `tree.go`（路由树匹配算法/优先级逻辑） | ⭐⭐⭐ 困难 | ⚠️ 较难修。涉及 radix tree 路由匹配核心算法，需要深入理解路由优先级排序和回溯逻辑 | - |
-| 8 | [#4133](https://github.com/gin-gonic/gin/issues/4133) | **Sonic 新版导致 Gin 编译错误** | 依赖库 `bytedance/sonic` v1.12.7 删除了 `internal/rt` 包，导致 Gin 编译失败 | `internal/json/` 目录下的 sonic 集成代码、`go.mod` 依赖版本 | ⭐ 简单 | ✅ 能修复。更新 `go.mod` 中 sonic 的版本约束，或调整 `internal/json` 中的导入路径适配新版 sonic | - |
-| 9 | [#4237](https://github.com/gin-gonic/gin/issues/4237) | **gin.Error() 不解包 joinErr** | `errors.Join()` 产生的组合错误传入 `gin.Error()` 后，输出格式混乱难以区分 | `errors.go`（`Error()` 方法和 `errorMsgs.String()` 格式化逻辑） | ⭐ 简单 | ✅ 能修复。在 `Error()` 中检测 `Unwrap() []error` 接口并递归展开即可 | - |
+| 8 | [#4133](https://github.com/gin-gonic/gin/issues/4133) | **Sonic 新版导致 Gin 编译错误** | 依赖库 `bytedance/sonic` v1.12.7 删除了 `internal/rt` 包，导致 Gin 编译失败 | `internal/json/` 目录下的 sonic 集成代码、`go.mod` 依赖版本 | ⭐ 简单 | ✅ 能修复。更新 `go.mod` 中 sonic 的版本约束，或调整 `internal/json` 中的导入路径适配新版 sonic | ✅ 已在 master 解决（commit 5f424ff 升级 sonic 到 v1.15.0） |
+| 9 | [#4237](https://github.com/gin-gonic/gin/issues/4237) | **gin.Error() 不解包 joinErr** | `errors.Join()` 产生的组合错误传入 `gin.Error()` 后，输出格式混乱难以区分 | `errors.go`（`Error()` 方法和 `errorMsgs.String()` 格式化逻辑） | ⭐ 简单 | ✅ 能修复。在 `Error()` 中检测 `Unwrap() []error` 接口并递归展开即可 | 🔄 MR中 [PR #4592](https://github.com/gin-gonic/gin/pull/4592) |
 
 ## 难度说明
 
